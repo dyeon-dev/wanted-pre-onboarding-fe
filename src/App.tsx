@@ -1,10 +1,10 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { MOCK_DATA, type MockData } from "./api/mockData";
 import "./App.css";
 
 function App() {
   const [products, setProducts] = useState<MockData[]>([]);
-  const [totalPrice, setTotalPrice] = useState(0);
+  // const [totalPrice, setTotalPrice] = useState(0);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1); // 현재 페이지 트랙
   const observer = useRef<IntersectionObserver | null>(null); // 스크롤링 트랙
@@ -21,10 +21,6 @@ function App() {
 
       setProducts((prevData) => [...prevData, ...nextPageData]);
 
-      // 현재 가져온 상품 리스트들의 액수들의 합계
-      const newTotal = nextPageData.reduce((sum, product) => sum + product.price, 0);
-      setTotalPrice((prevTotal) => prevTotal + newTotal);
-      
       setLoading(false);  // 로딩 끝 
     }, 1000)
   }
@@ -60,6 +56,10 @@ function App() {
       }
     }
   }, [lastProductRef, products]);
+
+  const totalPrice = useMemo(() => {
+    return products.reduce((sum, product) => sum + product.price, 0)
+  }, [products])
 
   return (
     <div className="app">
