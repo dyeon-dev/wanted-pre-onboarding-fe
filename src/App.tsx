@@ -10,7 +10,7 @@ function App() {
   const observer = useRef<IntersectionObserver | null>(null); // 스크롤링 트랙
   const [hasMore, setHasMore] = useState(true); // 더 불러올 데이터가 있는지 여부를 추적하는 상태
 
-  const itemsPerPage = 10; // 스크롤 당 로드 개수
+  const ITEMPERPAGE = 10; // 스크롤 당 로드 개수
 
   const loadProducts = (page: number) => {
     
@@ -19,7 +19,7 @@ function App() {
     setLoading(true); // 로딩 시작
 
     setTimeout(() => {
-      const nextPageData = MOCK_DATA.slice((page-1) * itemsPerPage, page * itemsPerPage); // itemsPerPage씩 분배
+      const nextPageData = MOCK_DATA.slice((page-1) * ITEMPERPAGE, page * ITEMPERPAGE); // itemsPerPage씩 분배
 
       // 데이터가 더 이상 없는 경우 hasMore를 false로 설정
       if (nextPageData.length === 0) {
