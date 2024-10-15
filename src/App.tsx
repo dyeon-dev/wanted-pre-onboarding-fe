@@ -8,18 +8,23 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1); // 현재 페이지 트랙
   const observer = useRef<IntersectionObserver | null>(null); // 스크롤링 트랙
+  const [hasMore, setHasMore] = useState(true); // 더 불러올 데이터가 있는지 여부를 추적하는 상태
 
   const itemsPerPage = 10; // 스크롤 당 로드 개수
 
-  const loadProducts = () => {
-    console.log('App rendered');
-
-    if (loading) return;
+  const loadProducts = (page: number) => {
+    
+    // if (loading) return;
 
     setLoading(true); // 로딩 시작
 
     setTimeout(() => {
       const nextPageData = MOCK_DATA.slice((page-1) * itemsPerPage, page * itemsPerPage); // itemsPerPage씩 분배
+
+      // 데이터가 더 이상 없는 경우 hasMore를 false로 설정
+      if (nextPageData.length === 0) {
+        setHasMore(false);
+      }
 
       setProducts((prevData) => [...prevData, ...nextPageData]);
 
@@ -28,13 +33,15 @@ function App() {
   }
 
   useEffect(() => {
-    loadProducts();
+    loadProducts(page); // 페이지에 따라 데이터 불러오기
   }, [page]);
 
 
   const lastProductRef = useRef<HTMLDivElement | null>(null); // 마지막 스크롤링 감지 
 
   useEffect(() => {
+    if (!hasMore) return; // 더 이상 불러올 데이터가 없으면 옵저버 동작 중지
+
     // Intersection Observer: 목록의 마지막 제품이 언제 표시되는지 추적 => 페이지 상태가 증가하고 로그할 다음 데이터 배치가 트리거 된다.
     observer.current = new IntersectionObserver(  // 새로운 IntersectionObserver 인스턴스 생성하고 참조에 할당
       (entry) => { // 변화가 감지되었을 때 실행되는 콜백 함수
@@ -57,7 +64,7 @@ function App() {
         observer.current.unobserve(lastProductRef.current); // 마지막 제품 관찰 중지
       }
     }
-  }, [lastProductRef, products]);
+  }, [lastProductRef, products, hasMore]);
 
   const totalPrice = useMemo(() => {
     console.log("Total price calculated")
@@ -90,6 +97,8 @@ function App() {
         })}
       </div>
       {loading && <p className="loading">Loading...</p>}
+      {!hasMore && <p>더 이상 로드할 제품이 없습니다.</p>} {/* 더 이상 로드할 제품이 없을 때 표시 */}
+
       <h2 className="total">Total Price: ${totalPrice}</h2>
 
     </div>
