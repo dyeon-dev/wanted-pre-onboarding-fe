@@ -12,6 +12,8 @@ function App() {
   const itemsPerPage = 10; // 스크롤 당 로드 개수
 
   const loadProducts = () => {
+    console.log('App rendered');
+
     if (loading) return;
 
     setLoading(true); // 로딩 시작
@@ -58,6 +60,7 @@ function App() {
   }, [lastProductRef, products]);
 
   const totalPrice = useMemo(() => {
+    console.log("Total price calculated")
     return products.reduce((sum, product) => sum + product.price, 0)
   }, [products])
 
@@ -69,7 +72,7 @@ function App() {
       {products.map((product, index) => {
           if (index === products.length - 1) {
             return (
-              <div ref={lastProductRef} key={product.productId} className="product">
+              <div ref={lastProductRef} key={`${product.productId}-${index}`} className="product">
                 <h3>{product.productName}</h3>
                 <p>Price: <span className="price">${product.price}</span></p>
                 <p>Date: {new Date(product.boughtDate).toLocaleDateString()}</p>
@@ -77,7 +80,7 @@ function App() {
             );
           } else {
             return (
-              <div key={product.productId} className="product">
+              <div key={`${product.productId}-${index}`} className="product">
                 <h3>{product.productName}</h3>
                 <p>Price: <span className="price">${product.price}</span></p>
                 <p>Date: {new Date(product.boughtDate).toLocaleDateString()}</p>
