@@ -61,10 +61,11 @@ function App() {
     // 정리: 컴포넌트가 언마운트되거나 업데이트될 때 해제하는 클린업 함수
     return () => { // return: 메모리 누수 및 원치 않는 동작을 방지하기 위한 정리 단계 역할
       if(observer.current && lastProductRef.current) { // 관찰자와 마지막 제품 참조가 모두 존재하면
-        observer.current.unobserve(lastProductRef.current); // 마지막 제품 관찰 중지
+        // observer.current.unobserve(lastProductRef.current); // 마지막 제품 관찰 중지
+        observer.current.disconnect();
       }
     }
-  }, [lastProductRef, products, hasMore]);
+  }, [products, hasMore]);
 
   const totalPrice = useMemo(() => {
     console.log("Total price calculated")
